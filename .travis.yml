@@ -6,7 +6,7 @@ before_install:
 
 #This will build the docker file from client folder and given the tag
 
-  - docker build -t kathpalrk/react-redis-postgres-travis -f ./client/Dockerfile.dev
+  - docker build -t kathpalrk/react-redis-postgres-travis -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run kathpalrk/react-redis-postgres-travis npm test -- --coverage --watchAll=false
