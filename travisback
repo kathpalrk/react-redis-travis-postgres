@@ -1,0 +1,39 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t coding4startups/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true coding4startups/react-test npm test
+
+after_success:
+  - docker build -t coding4startups/multi-client ./client
+  - docker build -t coding4startups/multi-nginx ./nginx
+  - docker build -t coding4startups/multi-server ./server
+  - docker build -t coding4startups/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push coding4startups/multi-client
+  - docker push coding4startups/multi-nginx
+  - docker push coding4startups/multi-server
+  - docker push coding4startups/multi-worker
+
+# take all these images and push them to docker hub
+#deploy:
+#  provider: elasticbeanstalk
+#  region: eu-west-3
+#  app: multi_docker
+#  env: MultiDocker-env
+#  bucket_name: elasticbeanstalk-eu-west-3-634261840555
+#  bucket_path: docker_multi
+#  on:
+#    branch: master
+#  access_key_id: $AWS_ACCESS_KEY
+#  secret_access_key:
+#    secure: $AWS_SECRET_KEY
+#
+
+
+
